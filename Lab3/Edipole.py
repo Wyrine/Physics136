@@ -33,26 +33,31 @@ posSphere = sphere(pos = vector(protDist, 0, 0), radius = sphereRad, color = col
 
 #first iteration is 12 electric field vectors in the xy plane
 #second iteration is 12 electric field vectors in the sxz plane
-for i in range (0, 2):
-    
+for i in range (0, 2):    
     ## initial values
     theta = 0
     ## calculations
     while theta < 2*pi:
         ## calculate new vector value for obslocation, using theta
-        if i == 0:
-            obsLoc = d*vector(cos(theta), sin(theta), 0)
-        else:
-            obsLoc = d*vector(cos(theta), 0, sin(theta))
-        ##use superposition principle to calculate eNet at obsLoc
+        obsLoc = d*vector(cos(theta), sin(theta) if i ==0 else 0 , sin(theta) if i == 1 else 0)
+        
+        #calculte the two position vectors from the negative and positive charge to the obsLoc
         rNeg = obsLoc - negSphere.pos
         rPos = obsLoc - posSphere.pos
+
+        #calculating the magnitude of the two position vectors 
         magRN = rNeg.mag
         magRP = rPos.mag
+
+        #calculating direction vector from the negative to obsLoc and positive to obsLoc
         rNHat = rNeg / magRN
-        rPHat = rPos/magRP
+        rPHat = rPos / magRP
+
+        #calculating electric field applied by the negative and positive charge at obsLoc
         ePos = oofpez * (qelectron)/(magRN ** 2) * rNHat
         eNeg = oofpez * (qproton)/(magRP ** 2) * rPHat
+
+        ##use superposition principle to calculate eNet at obsLoc
         eNet = ePos + eNeg
         ##print values of obsLoc and eNet vector
         print("obsLoc", obsLoc)
@@ -72,25 +77,36 @@ trail = curve (color=color.yellow)
 while True:
     #slow down the loop iteration so that it prints properly
     rate(100)
+    
     #setting the final momentum for the previous iteration to the initial
     #momentum of this iteration
     pi = pf
-    #calculating net electric force from the dipole
+    
+    #calculte the two position vectors from the negative and positive charge to the protLoc
     rNeg = protLoc.pos - negSphere.pos
     rPos = protLoc.pos - posSphere.pos
+    
+    #calculating the magnitude of the two position vectors
     magRN = rNeg.mag
     magRP = rPos.mag
+    
+    #calculating direction vector from the negative to obsLoc and positive to protLoc
     rNHat = rNeg / magRN
-    rPHat = rPos/magRP
+    rPHat = rPos / magRP
+    
+    #calculating electric field applied by the negative and positive charge at protLoc
     ePos = oofpez * (qelectron)/(magRN ** 2) * rNHat
     eNeg = oofpez * (qproton)/(magRP ** 2) * rPHat
+    
+    ##use superposition principle to calculate eNet at protLoc
     eNet = ePos + eNeg
-    #calculating net force
-    fNet = eNet * qproton
+    
     #calculating final momentum
     pf = pi + fNet * deltat
+    
     #updating proton location
     protLoc.pos = protLoc.pos+ pi/mProton * deltat
+    
     #updating the trail
     trail.append(pos = protLoc.pos)
 
