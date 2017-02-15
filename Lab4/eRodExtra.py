@@ -21,7 +21,7 @@ Q = 3e-08
 Nq = 30   # number of point charges used to model a uniformly charged rod
 dxq = L/Nq
 dQ = Q/Nq
-scalefactor = .3   # initial value will need to be changed later
+scalefactor = abs((L/2) / (oofpez*64*Q/L**2))   # initial value will need to be changed later
 
 ## OBJECTS
 cylinder(pos=(-L/2,0,0), axis = (L,0,0), radius=0.02, opacity = 0.2)
@@ -34,7 +34,7 @@ while xq < L/2:
 Earrow = arrow(axis=(0,0,0), color=color.orange)
 while True:
     rate(30)
-    obsloc = scene.mouse.getclick().pos # observation location
+    obsloc = scene.mouse.pos # observation location
     Earrow.pos = obsloc
     ## CALCULATIONS
     Enet = vector(0,0,0)  ## starts out at zero and should build up 
@@ -42,7 +42,7 @@ while True:
     while xq < L/2:
         ## Calculate the source location as a vector:
         sourcelocation = vector(xq,0,0)
-        ## Calculate the field dE (a vector) contributed by this point charge source:
+        ## Calculate the fiewhileld dE (a vector) contributed by this point charge source:
         r = obsloc - sourcelocation
         magR = r.mag
         rHat = r/magR
@@ -58,7 +58,7 @@ while True:
     print("Emag = ",Emag)
     ## Change the axis of Earrow to point in the direction of Enet and
     ## scale it so it looks reasonable:
-    Earrow.axis = Enet * scalefactor/Emag
+    Earrow.axis = Enet * scalefactor
 
 
 
